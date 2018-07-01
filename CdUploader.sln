@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CdUploaderCore", "CdUploaderCore\CdUploaderCore.csproj", "{DEF6C1A4-6299-46E3-8BAC-B62DDC20D9FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEF6C1A4-6299-46E3-8BAC-B62DDC20D9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEF6C1A4-6299-46E3-8BAC-B62DDC20D9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEF6C1A4-6299-46E3-8BAC-B62DDC20D9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEF6C1A4-6299-46E3-8BAC-B62DDC20D9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8B263521-6A11-458E-9761-5D5A91A10AF8}
+	EndGlobalSection
+EndGlobal

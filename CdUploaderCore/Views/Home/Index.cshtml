@@ -1,0 +1,155 @@
+﻿@{ Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome-free-5.1.0-web/css/all.css" rel="stylesheet" />
+    <link href="~/lib/message/message.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="~/lib/message/message.js"></script>
+    <script src="~/lib/vue/vue.2.5.16.min.js"></script>
+    <script src="~/lib/axios/axios.0.18.0.min.js"></script>
+    <script src="~/js/site.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div id="drop_area" @@click="handleSelectFiles">
+                <button class="btn btn-success"><i class="fa fa-plus"></i> 批量上传图片...</button>
+                <span class="upload-tip-text">点击按钮或者将文件拖拽至此区域</span>
+                <input style="display:none;" id="fileupload" type="file" name="file" multiple @@change="handleFileChanged">
+            </div>
+            <div class="row upload-image-box">
+                <template v-for="(file,index) in files">
+                    <div class="col-md-3">
+                        <div class="image-item">
+                            <img v-show="file.src.length>0" :src="file.src" class="img-responsive" />
+                            <span class="image-toolbar">
+                                <a v-show="file.uploading" class="btn btn-danger btn-xs" title="取消" @@click="handleCancel(file,index)"><i class="fa fa-times"></i></a>
+                                <a v-show="file.success" class="btn btn-danger btn-xs" title="删除" @@click="handleRemove(file,index)"><i class="fa fa-trash-alt"></i></a>
+                            </span>
+                            <div class="upload-title">
+                                <div :class="{'upload-uploading':file.uploading,'upload-progress':true}" :style="{width: file.uploadPercentage + '%' }"></div>
+                                {{file.name}}
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                files:[]
+            },
+            mounted() {
+                var target = this;
+                var dp = document.getElementById('drop_area');
+                dp.addEventListener('dragover', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+                });
+                dp.addEventListener("drop", function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    target.onDrop(e);
+                    // do something upload
+                });
+            },
+            methods: {
+                onDrop:function(e) {
+                    var files = e.dataTransfer.files;
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        this.handleUpload(file);
+                    }
+                },
+                handleSelectFiles() {
+                    document.getElementById('fileupload').click();
+                },
+                handleFileChanged(e) {
+                    console.log(e.target.files);
+                    for (var i = 0; i < e.target.files.length; i++) {
+                        this.handleUpload(e.target.files[i]);
+                    }
+                },
+                handleUpload(file) {
+                    var item = {
+                        name: file.name,
+                        uploadPercentage: 0,
+                        cancelToken: null,
+                        src: '',
+                        success: false,
+                        uploading:false
+                    };
+                    var CancelToken = axios.CancelToken;
+                    this.files.push(item);
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function(e) {
+                        item.src = e.target.result;
+                    }
+                    var fd = new FormData();
+                    fd.append('files', file);
+                    item.uploading = true;
+                    axios.post("api/v1/upload/image", fd,
+                        {
+                            onUploadProgress: function(progressEvent) {
+                                item.uploadPercentage =
+                                    parseInt(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+                            }.bind(this),
+                            cancelToken:new CancelToken(function executor(c) {
+                                item.cancelToken = c;
+                            })
+                        }
+                    ).then(function (response) {
+                        item.success = true;
+                        item.uploading = false;
+                    });
+                },
+                handleCancel(file, index) {
+                    if (file.cancelToken) {
+                        file.cancelToken();
+                        this.doRemove(file, index);
+                    }
+                },
+                doRemove(file, index) {
+                    this.files.splice(index, 1);
+                },
+                handleRemove(file, index) {
+                    var target = this;
+                    $.confirm({
+                        title: '操作提示',
+                        type:"red",
+                        backgroundDismiss: true,
+                        escapeKey: true,
+                        theme: "material",//material
+                        bgOpacity:0.3,
+                        content: '确定要删除当前的文件吗?',
+                        buttons: {
+                            ok: {
+                                text: '确 定',
+                                btnClass: 'btn-danger',
+                                keys: ['enter'],
+                                action: function () {
+                                    target.doRemove(file,index);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

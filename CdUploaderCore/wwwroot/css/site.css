@@ -1,0 +1,9 @@
+﻿#drop_area { border: 3px solid #EEE; padding: 30px 20px; border-radius: 5px; margin-top: 20px; cursor: pointer; background-color: #fff; position: relative; }
+.upload-tip-text { color: #DDD; font-size: 26px; display: block; position: absolute; top: 30px; left: 0; right: 0; width: 100%; text-align: center; z-index: 9; }
+.btn-upload { z-index: 10; }
+.upload-image-box { margin-top: 15px; }
+.image-item { position: relative; border: 1px solid #ddd; border-radius: 3px; }
+.image-toolbar { position: absolute; top: 2px; right: 2px; display: block; padding: 3px; }
+.upload-title .upload-progress { height: 1px; border-top: 1px solid #eee; padding: 6px 0; }
+.upload-title .upload-uploading { border-color: #00bfff; width: 100%; }
+.upload-title { }
